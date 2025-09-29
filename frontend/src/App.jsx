@@ -3,13 +3,16 @@ import { useEffect } from 'react'
 import axios from 'axios'
 
 
+const Backend_base_url = import.meta.env.VITE_BACKEND_BASE_URL;
+
+
 function App() {
   const [todos, setTodos] = useState([])
   const [newTask, setNewTask] = useState('')
 
   useEffect(() => {
     // Fetch todos from the backend API
-    axios.get('http://localhost:8000/todos')
+    axios.get(Backend_base_url)
       .then(response => {
         setTodos(response.data);
       })
@@ -23,7 +26,7 @@ function App() {
   const handleDelete = (id) => {
     // Handle task deletion
     setTodos(todos.filter(todo => todo._id !== id));
-    axios.delete(`http://localhost:8000/todos/${id}`)
+    axios.delete(`${Backend_base_url}/${id}`)
       .then(response => {
         console.log('Todo deleted:', response.data);
       })
@@ -35,7 +38,7 @@ function App() {
     setTodos(todos.map(todo => 
       todo._id === id ? { ...todo, completed: !todo.completed } : todo
     ));
-    axios.put(`http://localhost:8000/todos/${id}`, { completed: true })
+    axios.put(`${Backend_base_url}/${id}`, { completed: true })
       .then(response => {
         console.log('Todo updated:', response.data);
       })

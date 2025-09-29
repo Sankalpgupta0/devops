@@ -1,12 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import { connect } from 'mongoose';
-import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-const todos = mongoose.model('Todo', new mongoose.Schema({
-  task: String,
-  completed: Boolean,
-}));
+dotenv.config();
 
 const app = express();
 
@@ -20,45 +17,13 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.send("api is running");
 });
-app.get('/todos', (req, res) => {
-    todos.find().then(data => res.json(data));
-});
 
-app.post('/todos', (req, res) => {
-    const newTodo = new todos({
-        task: req.body.task,
-        completed: false,
-    });
-    newTodo.save().then(data => res.json(data));
-});
-
-app.delete('/todos/:id', (req, res) => {
-    todos.findByIdAndDelete(req.params.id)
-      .then(data => {
-        if (data) {
-          res.json({ message: 'Todo deleted', data });
-        } else {
-          res.status(404).json({ message: 'Todo not found' });
-        }
-      })
-      .catch(err => res.status(500).json({ message: 'Error deleting todo', error: err }));
-  });
-
-app.put('/todos/:id', (req, res) => {
-    todos.findByIdAndUpdate(req.params.id, req.body, { new: true })
-        .then(data => {
-            if (data) {
-                res.json({ message: 'Todo updated', data });
-            } else {
-                res.status(404).json({ message: 'Todo not found' });
-            }
-        })
-        .catch(err => res.status(500).json({ message: 'Error updating todo', error: err }));
-});
+import router from './routes.js';
+app.use('/todos', router);
 
 const PORT = process.env.PORT || 8000;
 
-connect('mongodb://localhost:27017/todo_app', 
+connect(process.env.MONGO_URI, 
     { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('MongoDB connected')
