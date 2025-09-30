@@ -6,8 +6,12 @@ const Backend_base_url = import.meta.env.VITE_BACKEND_BASE_URL;
 
 function App() {
 
-    const undefinedVariable = "This variable is defined but not used";
 
+
+
+
+
+    
     const [todos, setTodos] = useState([]);
     const [newTask, setNewTask] = useState('');
 
