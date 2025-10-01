@@ -49,3 +49,42 @@ jobs:
 
       - name: Build frontend image
         run: docker build -t todo-frontend ./frontend
+
+  deploy:
+    needs: build  # ensures build passes before deploying
+    if : github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      -name : add EC2 host to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+
+      - name: write ssh key to file
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+        
+      - name: Deploy to EC2 (git pull + docker-compose up -d --build)
+        run: |
+          ssh -i ec2_key.pem ${EC2_USER}@${EC2_HOST} << EOF
+            set -e
+            cd ${EC2_APP_DIR}
+
+            git fetch --all
+            git reset --hard origin/main
+
+            docker-compose up -d --build
+            docker image prune -f
+            docker compose ps
+          EOF
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_KEY: ${{ secrets.EC2_KEY }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_APP_DIR: ${{ secrets.EC2_APP_DIR }}
