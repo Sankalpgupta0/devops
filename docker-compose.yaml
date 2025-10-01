@@ -9,9 +9,10 @@ services:
       - ./backend/.env
 
   frontend:
-    build: ./frontend
-    args: 
-      VITE_API_URL: http://13.62.46.39:8000/todos
+    build:
+      context: ./frontend
+      args: 
+        VITE_API_URL: http://13.62.46.39:8000/todos
     container_name: todo_frontend
     restart: always
     ports:
