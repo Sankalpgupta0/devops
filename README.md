@@ -121,6 +121,81 @@ Important Vite note:
 
 ---
 
+## Docker Volumes
+
+For data persistence and development, consider adding volumes to your `docker-compose.yaml`:
+
+```yaml
+services:
+  backend:
+    # ... other config
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    # For MongoDB data persistence (if using local MongoDB):
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+volumes:
+  mongodb_data:
+```
+
+Benefits:
+- **Development**: Mount source code for live reloading
+- **Data persistence**: MongoDB data survives container restarts
+- **Performance**: Avoid copying large `node_modules` directories
+
+---
+
+## Docker Registry
+
+Pre-built images are available on Docker Hub:
+- **Repository**: [https://hub.docker.com/repositories/sankalpgupta0](https://hub.docker.com/repositories/sankalpgupta0)
+- **Backend image**: `sankalpgupta0/todo-app-backend:latest`
+- **Frontend image**: `sankalpgupta0/todo-app-frontend:latest`
+
+### Using Pre-built Images
+
+Instead of building locally, you can pull and run pre-built images:
+
+```bash
+# Pull latest images
+docker pull sankalpgupta0/todo-app-backend:latest
+docker pull sankalpgupta0/todo-app-frontend:latest
+
+# Update docker-compose.yaml to use pre-built images
+services:
+  backend:
+    image: sankalpgupta0/todo-app-backend:latest
+    # ... other config
+  frontend:
+    image: sankalpgupta0/todo-app-frontend:latest
+    # ... other config
+```
+
+### Building and Pushing to Registry
+
+To build and push your own images:
+
+```bash
+# Build and tag images
+docker build -t sankalpgupta0/todo-app-backend:latest ./backend
+docker build -t sankalpgupta0/todo-app-frontend:latest ./frontend
+
+# Push to Docker Hub
+docker push sankalpgupta0/todo-app-backend:latest
+docker push sankalpgupta0/todo-app-frontend:latest
+```
+
+**Note**: You'll need to be logged in to Docker Hub (`docker login`) and have push permissions to the repository.
+
+---
+
 ## API Reference
 Base URL: `http://<backend-host>:<port>/todos`
 
@@ -226,7 +301,11 @@ High-level steps to deploy on a single EC2 instance:
    - Set `frontend/.env` or pass `VITE_API_URL` during image build.
 4. Deploy with Compose:
    ```bash
-   docker compose pull  # if images are in a registry
+   # Option 1: Use pre-built images from Docker Hub
+   docker compose pull
+   docker compose up -d
+   
+   # Option 2: Build locally (if you need custom changes)
    docker compose up -d --build
    ```
 5. Optional reverse proxy + TLS:
@@ -234,8 +313,9 @@ High-level steps to deploy on a single EC2 instance:
    - Point your domain’s A record to the EC2 public IP.
 
 Notes:
-- Prefer pulling prebuilt images from a registry in CI/CD rather than building on the instance.
+- **Recommended**: Use pre-built images from Docker Hub (`sankalpgupta0/todo-app-backend:latest`, `sankalpgupta0/todo-app-frontend:latest`) for faster deployments.
 - If using MongoDB Atlas, allow the EC2 public egress IP in Atlas Network Access and use TLS in `MONGO_URI`.
+- Update your `docker-compose.yaml` to reference the registry images instead of building locally.
 
 ---
 
@@ -247,7 +327,7 @@ Example approach using GitHub Actions:
   - Install, lint, and build both `backend` and `frontend`.
   - Optionally run unit/integration tests.
 - CD (on main branch):
-  - Build and push Docker images for `backend` and `frontend` to a container registry (e.g., GHCR/ECR).
+  - Build and push Docker images for `backend` and `frontend` to Docker Hub registry (`sankalpgupta0/todo-app-backend:latest`, `sankalpgupta0/todo-app-frontend:latest`).
   - Deploy:
     - EC2: SSH into instance and run `docker compose pull && docker compose up -d`.
     - Kubernetes: `kubectl apply -f k8s/` against the cluster.
@@ -305,7 +385,8 @@ jobs:
 Deploying to a Kubernetes cluster (e.g., EKS, GKE, AKS, kind):
 
 1. Container images:
-   - Push `backend` and `frontend` images to a registry reachable by the cluster.
+   - Use pre-built images from Docker Hub: `sankalpgupta0/todo-app-backend:latest` and `sankalpgupta0/todo-app-frontend:latest`.
+   - Or push your own `backend` and `frontend` images to a registry reachable by the cluster.
 2. Manifests (suggested `k8s/` folder):
    - `deployment-backend.yaml`: Deployment + Service (ClusterIP) exposing port `8000`.
    - `deployment-frontend.yaml`: Deployment + Service (ClusterIP) exposing port `80` (or Vite preview behind a web server).
