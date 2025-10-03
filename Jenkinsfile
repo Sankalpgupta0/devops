@@ -52,12 +52,6 @@ EOF
                     docker compose up -d
                     echo "listing running containers..."
                     docker ps
-
-                    echo "===Backend Logs==="
-                    docker logs $(docker ps -q --filter "ancestor=${BACKEND_IMAGE}")
-
-                    echo "===Frontend Logs==="
-                    docker logs $(docker ps -q --filter "ancestor=${FRONTEND_IMAGE}")
                 '''
             }
         }
