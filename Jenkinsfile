@@ -21,12 +21,12 @@ pipeline {
             steps {
                 sh '''
                     echo "Preparing .env file for backend..."
-                    mkdir -p ./server
-                    cat > ./server/.env <<EOF
+                    mkdir -p ./backend
+                    cat > ./backend/.env <<EOF
                     PORT=${PORT}
                     MONGO_URI=${MONGO_URI}
                     EOF
-                    cat ./server/.env
+                    cat ./backend/.env
                 '''
             }
         }
