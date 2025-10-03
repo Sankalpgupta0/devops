@@ -35,10 +35,10 @@ pipeline {
             steps {
                 sh '''
                     echo "Building backend Docker image..."
-                    docker build -t ${BACKEND_IMAGE} ./server 
+                    docker build -t ${BACKEND_IMAGE} ./backend 
 
                     echo "Building frontend Docker image..."
-                    docker build -t ${FRONTEND_IMAGE} ./client --build-arg VITE_API_URL=http://localhost:8000
+                    docker build -t ${FRONTEND_IMAGE} ./frontend --build-arg VITE_API_URL=http://localhost:8000
                 '''
             }
         }
