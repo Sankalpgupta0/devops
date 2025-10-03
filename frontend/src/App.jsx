@@ -8,12 +8,14 @@ function App() {
     const [todos, setTodos] = useState([]);
     const [newTask, setNewTask] = useState('');
     const [filter, setFilter] = useState('all'); // all | active | completed
+    const [editingId, setEditingId] = useState(null);
+    const [editTask, setEditTask] = useState('');
 
     useEffect(() => {
         axios
             .get(Backend_base_url)
             .then((response) => {
-                setTodos(response.data);
+                setTodos(response.data.data || response.data);
             })
             .catch((error) => console.error('Error fetching todos:', error));
     }, []);
@@ -33,26 +35,77 @@ function App() {
     };
 
     const handleToggleComplete = (id) => {
+        const todo = todos.find(t => t._id === id);
+        const newCompletedState = !todo.completed;
+        
         setTodos(
-            todos.map((todo) => (todo._id === id ? { ...todo, completed: !todo.completed } : todo))
+            todos.map((todo) => (todo._id === id ? { ...todo, completed: newCompletedState } : todo))
         );
         axios
-            .put(`${Backend_base_url}/${id}`, { completed: true })
+            .put(`${Backend_base_url}/${id}`, { completed: newCompletedState })
             .then((response) => {
                 console.log('Todo updated:', response.data);
             })
-            .catch((error) => console.error('Error updating todo:', error));
+            .catch((error) => {
+                console.error('Error updating todo:', error);
+                // Revert the state on error
+                setTodos(
+                    todos.map((todo) => (todo._id === id ? { ...todo, completed: !newCompletedState } : todo))
+                );
+            });
+    };
+
+    const handleEdit = (id, currentTask) => {
+        setEditingId(id);
+        setEditTask(currentTask);
+    };
+
+    const handleSaveEdit = (id) => {
+        if (editTask.trim()) {
+            const originalTask = todos.find(t => t._id === id)?.task;
+            
+            // Optimistically update the UI
+            setTodos(todos.map((todo) => 
+                todo._id === id ? { ...todo, task: editTask } : todo
+            ));
+            
+            axios
+                .put(`${Backend_base_url}/${id}`, { task: editTask })
+                .then((response) => {
+                    console.log('Todo updated successfully:', response.data);
+                    setEditingId(null);
+                    setEditTask('');
+                })
+                .catch((error) => {
+                    console.error('Error updating todo:', error);
+                    // Revert the state on error
+                    setTodos(todos.map((todo) => 
+                        todo._id === id ? { ...todo, task: originalTask } : todo
+                    ));
+                    alert('Failed to update todo. Please try again.');
+                });
+        } else {
+            alert('Task cannot be empty');
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setEditTask('');
     };
 
     const handleFormSubmit = () => {
         if (newTask.trim()) {
             axios
-                .post('http://localhost:8000/todos', { task: newTask })
+                .post(Backend_base_url, { task: newTask })
                 .then((response) => {
-                    setTodos([...todos, response.data]);
+                    setTodos([...todos, response.data.data || response.data]);
                     setNewTask('');
                 })
-                .catch((error) => console.error('Error adding todo:', error));
+                .catch((error) => {
+                    console.error('Error adding todo:', error);
+                    alert('Failed to add todo. Please try again.');
+                });
         }
     };
 
@@ -146,17 +199,56 @@ function App() {
                             >
                                 ✓
                             </button>
-                            <span
-                                className={`flex-1 text-slate-800 ${todo.completed ? 'line-through text-slate-400' : ''}`}
-                            >
-                                {todo.task}
-                            </span>
-                            <button
-                                className="opacity-80 hover:opacity-100 text-rose-600 hover:text-rose-700 text-sm font-medium"
-                                onClick={() => handleDelete(todo._id)}
-                            >
-                                Delete
-                            </button>
+                            
+                            {editingId === todo._id ? (
+                                <div className="flex-1 flex items-center gap-2">
+                                    <input
+                                        type="text"
+                                        value={editTask}
+                                        onChange={(e) => setEditTask(e.target.value)}
+                                        className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-800 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') handleSaveEdit(todo._id);
+                                            if (e.key === 'Escape') handleCancelEdit();
+                                        }}
+                                        autoFocus
+                                    />
+                                    <button
+                                        onClick={() => handleSaveEdit(todo._id)}
+                                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        onClick={handleCancelEdit}
+                                        className="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <span
+                                        className={`flex-1 text-slate-800 ${todo.completed ? 'line-through text-slate-400' : ''}`}
+                                    >
+                                        {todo.task}
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <button
+                                            className="opacity-80 hover:opacity-100 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                                            onClick={() => handleEdit(todo._id, todo.task)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="opacity-80 hover:opacity-100 text-rose-600 hover:text-rose-700 text-sm font-medium"
+                                            onClick={() => handleDelete(todo._id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </li>
                     ))}
                 </ul>
