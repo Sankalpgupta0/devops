@@ -40,7 +40,7 @@ EOF
                     docker build -t ${BACKEND_IMAGE} ./backend 
 
                     echo "Building frontend Docker image..."
-                    docker build -t ${FRONTEND_IMAGE} ./frontend --build-arg VITE_API_URL=http://localhost:8000
+                    docker build -t ${FRONTEND_IMAGE} ./frontend --build-arg VITE_API_URL=http://localhost:8000/todos
                 '''
             }
         }
