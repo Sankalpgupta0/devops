@@ -75,10 +75,16 @@ function App() {
             <div className="max-w-xl mx-auto">
                 <header className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-3xl font-extrabold tracking-tight text-slate-800">Todo</h1>
-                        <p className="text-sm text-slate-500">{remainingCount} task{remainingCount === 1 ? '' : 's'} remaining</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-slate-800">
+                            Todo
+                        </h1>
+                        <p className="text-sm text-slate-500">
+                            {remainingCount} task{remainingCount === 1 ? '' : 's'} remaining
+                        </p>
                     </div>
-                    <span className="inline-flex items-center rounded-md bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">v1</span>
+                    <span className="inline-flex items-center rounded-md bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">
+                        v1
+                    </span>
                 </header>
 
                 <div className="bg-white/90 backdrop-blur rounded-xl shadow-md border border-slate-200 p-4 mb-4">
@@ -125,7 +131,10 @@ function App() {
                         <li className="text-center text-slate-500">No tasks to show</li>
                     )}
                     {filteredTodos.map((todo) => (
-                        <li key={todo._id} className="group bg-white rounded-xl border border-slate-200 shadow-sm p-3 flex items-center gap-3">
+                        <li
+                            key={todo._id}
+                            className="group bg-white rounded-xl border border-slate-200 shadow-sm p-3 flex items-center gap-3"
+                        >
                             <button
                                 aria-label={todo.completed ? 'Mark as active' : 'Mark as completed'}
                                 className={`h-5 w-5 flex items-center justify-center rounded border transition-colors ${
@@ -137,7 +146,9 @@ function App() {
                             >
                                 ✓
                             </button>
-                            <span className={`flex-1 text-slate-800 ${todo.completed ? 'line-through text-slate-400' : ''}`}>
+                            <span
+                                className={`flex-1 text-slate-800 ${todo.completed ? 'line-through text-slate-400' : ''}`}
+                            >
                                 {todo.task}
                             </span>
                             <button
