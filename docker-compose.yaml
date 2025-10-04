@@ -47,6 +47,9 @@ services:
 
   ngnix:
     image: nginx:alpine
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: todo_nginx
     restart: unless-stopped
     ports:
