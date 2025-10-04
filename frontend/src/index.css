@@ -8,3 +8,18 @@
 .chip-active {
     @apply border-indigo-400 bg-indigo-50 text-indigo-700;
 }
+
+.partition-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.partition-table th,
+.partition-table td {
+    border-top: 1px solid #ccc; 
+    padding: 8px;
+    text-align: left;
+}
+.border-right-only{
+    border-right: 1px solid #ccc;
+}

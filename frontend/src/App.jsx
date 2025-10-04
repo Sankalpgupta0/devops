@@ -140,9 +140,23 @@ function App() {
                         </p>
                     </div>
                     <span className="inline-flex items-center rounded-md bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">
-                        v1-normal_mern_app | v2-dockerized <br />
-                        v3-CI/CD | v4-on_EC2 <br />
-                        v5-with_jenkins | v6-with_nginx -- current <br />
+                        <table class="partition-table">
+                            <tbody>
+                                <tr>
+                                    <td class='border-right-only'>v1 : normal_mern_app</td>
+                                    <td>v2 : dockerized</td>
+                                </tr>
+                                <tr>
+                                    <td class='border-right-only'>v4 : on_EC2</td>
+                                    <td>v5 : with_jenkins</td>
+                                </tr>
+                                <tr>
+                                    <td class='border-right-only'>v3 : CI/CD</td>
+                                    <td>v6 : with_nginx <span className='text-green-800'>--current</span> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
                     </span>
                 </header>
 
@@ -196,11 +210,10 @@ function App() {
                         >
                             <button
                                 aria-label={todo.completed ? 'Mark as active' : 'Mark as completed'}
-                                className={`h-5 w-5 flex items-center justify-center rounded border transition-colors ${
-                                    todo.completed
-                                        ? 'bg-green-500 border-green-500 text-white'
-                                        : 'border-slate-300 text-transparent'
-                                }`}
+                                className={`h-5 w-5 flex items-center justify-center rounded border transition-colors ${todo.completed
+                                    ? 'bg-green-500 border-green-500 text-white'
+                                    : 'border-slate-300 text-transparent'
+                                    }`}
                                 onClick={() => handleToggleComplete(todo._id)}
                             >
                                 ✓
