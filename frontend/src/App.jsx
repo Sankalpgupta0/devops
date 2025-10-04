@@ -141,7 +141,7 @@ function App() {
                         v3-CI/CD <br />
                         v4-on_EC2 <br />
                         v5-with_jenkins <br />
-                        v6-with_nginx <span className='text-green-400'>(current)</span> <br />
+                        v6-with_nginx -- current</span> <br />
                     </span>
                 </header>
 
