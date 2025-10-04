@@ -15,6 +15,20 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// <-- Add logging middleware here
+app.use((req, res, next) => {
+    console.log('--- Request Start ---');
+    console.log('Time:', new Date().toISOString());
+    console.log('Method:', req.method);
+    console.log('URL:', req.originalUrl);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+    console.log('Query Params:', req.query);
+    console.log('--- Request End ---\n');
+    next();
+});
+
 app.get('/', (req, res) => {
     res.send('api is running');
 });

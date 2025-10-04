@@ -136,7 +136,12 @@ function App() {
                         </p>
                     </div>
                     <span className="inline-flex items-center rounded-md bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-600 ring-1 ring-inset ring-indigo-200">
-                        v1
+                        v1-normal_mern_app <br />
+                        v2-dockerized <br />
+                        v3-CI/CD <br />
+                        v4-on_EC2 <br />
+                        v5-with_jenkins <br />
+                        v6-with_nginx <span className='text-green-400'>(current)</span> <br />
                     </span>
                 </header>
 
