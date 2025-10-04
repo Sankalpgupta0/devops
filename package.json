@@ -10,7 +10,9 @@
     "backend": "cd backend && nodemon index.js",
     "frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"cd backend && nodemon index.js\" \"cd frontend && npm run dev\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "concurrently \"cd backend && npm run lint\" \"cd frontend && npm run lint\"",
+    "format": "concurrently \"cd backend && nmp run format\" \"cd frontend && npm run format\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

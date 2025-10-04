@@ -35,11 +35,13 @@ function App() {
     };
 
     const handleToggleComplete = (id) => {
-        const todo = todos.find(t => t._id === id);
+        const todo = todos.find((t) => t._id === id);
         const newCompletedState = !todo.completed;
-        
+
         setTodos(
-            todos.map((todo) => (todo._id === id ? { ...todo, completed: newCompletedState } : todo))
+            todos.map((todo) =>
+                todo._id === id ? { ...todo, completed: newCompletedState } : todo
+            )
         );
         axios
             .put(`${Backend_base_url}/${id}`, { completed: newCompletedState })
@@ -50,7 +52,9 @@ function App() {
                 console.error('Error updating todo:', error);
                 // Revert the state on error
                 setTodos(
-                    todos.map((todo) => (todo._id === id ? { ...todo, completed: !newCompletedState } : todo))
+                    todos.map((todo) =>
+                        todo._id === id ? { ...todo, completed: !newCompletedState } : todo
+                    )
                 );
             });
     };
@@ -62,13 +66,11 @@ function App() {
 
     const handleSaveEdit = (id) => {
         if (editTask.trim()) {
-            const originalTask = todos.find(t => t._id === id)?.task;
-            
+            const originalTask = todos.find((t) => t._id === id)?.task;
+
             // Optimistically update the UI
-            setTodos(todos.map((todo) => 
-                todo._id === id ? { ...todo, task: editTask } : todo
-            ));
-            
+            setTodos(todos.map((todo) => (todo._id === id ? { ...todo, task: editTask } : todo)));
+
             axios
                 .put(`${Backend_base_url}/${id}`, { task: editTask })
                 .then((response) => {
@@ -79,9 +81,11 @@ function App() {
                 .catch((error) => {
                     console.error('Error updating todo:', error);
                     // Revert the state on error
-                    setTodos(todos.map((todo) => 
-                        todo._id === id ? { ...todo, task: originalTask } : todo
-                    ));
+                    setTodos(
+                        todos.map((todo) =>
+                            todo._id === id ? { ...todo, task: originalTask } : todo
+                        )
+                    );
                     alert('Failed to update todo. Please try again.');
                 });
         } else {
@@ -141,7 +145,7 @@ function App() {
                         v3-CI/CD <br />
                         v4-on_EC2 <br />
                         v5-with_jenkins <br />
-                        v6-with_nginx -- current</span> <br />
+                        v6-with_nginx -- current <br />
                     </span>
                 </header>
 
@@ -204,7 +208,7 @@ function App() {
                             >
                                 ✓
                             </button>
-                            
+
                             {editingId === todo._id ? (
                                 <div className="flex-1 flex items-center gap-2">
                                     <input
