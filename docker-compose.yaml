@@ -46,7 +46,6 @@ services:
       - todo_network
 
   ngnix:
-    image: nginx:alpine
     build: 
       context: ./nginx
       dockerfile: Dockerfile
