@@ -4,6 +4,7 @@ pipeline {
     environment {
         BACKEND_IMAGE   = "todo_backend:jenkins"
         FRONTEND_IMAGE  = "todo_frontend:jenkins"
+        NGNIX_IMAGE    = "todo_nginx:jenkins"
         PORT = 8000
         MONGO_URI = "mongodb://todo_mongoDB:27017/taskdb"
         
@@ -38,6 +39,9 @@ EOF
                 sh '''
                     echo "Building backend Docker image..."
                     docker build -t ${BACKEND_IMAGE} ./backend 
+
+                    echo "Building Nginx Docker image..."
+                    docker build -t ${NGNIX_IMAGE} ./nginx
 
                     echo "Building frontend Docker image..."
                     docker build -t ${FRONTEND_IMAGE} ./frontend --build-arg VITE_API_URL=http://localhost:8000/todos
